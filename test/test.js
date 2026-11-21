@@ -1533,7 +1533,17 @@ describe("follow-redirects", function () {
     "Authorization",
     "Proxy-Authorization",
     "Cookie",
+    "Sensitive-A",
+    "sensitive-a",
+    "SENSITIVE-A",
+    "X-Sensitive-B",
+    "x-sensitive-b",
   ].forEach(function (header) {
+    var sensitiveHeaders = [
+      "Sensitive-A",
+      "x-sensitive-b",
+    ];
+
     describe("when the client passes an header named " + header, function () {
       it("ignores it when null", function () {
         app.get("/a", redirectsTo(302, "http://localhost:3600/b"));
@@ -1544,6 +1554,7 @@ describe("follow-redirects", function () {
         var opts = url.parse("http://127.0.0.1:3600/a");
         opts.headers = { host: "localhost" };
         opts.headers[header] = null;
+        opts.sensitiveHeaders = sensitiveHeaders;
 
         return server.start(app)
           .then(asPromise(function (resolve, reject) {
@@ -1568,6 +1579,7 @@ describe("follow-redirects", function () {
         var opts = url.parse("http://localhost:3600/a");
         opts.headers = {};
         opts.headers[header] = "the header value";
+        opts.sensitiveHeaders = sensitiveHeaders;
 
         return server.start(app)
           .then(asPromise(function (resolve, reject) {
@@ -1592,6 +1604,7 @@ describe("follow-redirects", function () {
         var opts = url.parse("http://127.0.0.1:3600/a");
         opts.headers = { host: "localhost:3600" };
         opts.headers[header] = "the header value";
+        opts.sensitiveHeaders = sensitiveHeaders;
 
         return server.start(app)
           .then(asPromise(function (resolve, reject) {
@@ -1616,6 +1629,7 @@ describe("follow-redirects", function () {
         var opts = url.parse("http://127.0.0.1:3600/a");
         opts.headers = { host: "localhost:3600" };
         opts.headers[header] = "the header value";
+        opts.sensitiveHeaders = sensitiveHeaders;
 
         return server.start(app)
           .then(asPromise(function (resolve, reject) {
@@ -1640,6 +1654,7 @@ describe("follow-redirects", function () {
         var opts = url.parse("http://localhost:3600/a");
         opts.headers = {};
         opts.headers[header] = "the header value";
+        opts.sensitiveHeaders = sensitiveHeaders;
 
         // Intercept the hostname, as no DNS entry is defined for it
         opts.beforeRedirect = function (options) {
@@ -1670,6 +1685,7 @@ describe("follow-redirects", function () {
         var opts = url.parse("http://127.0.0.1:3600/a");
         opts.headers = { host: "localhost" };
         opts.headers[header] = "the header value";
+        opts.sensitiveHeaders = sensitiveHeaders;
 
         return server.start(app)
           .then(asPromise(function (resolve, reject) {
@@ -1694,6 +1710,7 @@ describe("follow-redirects", function () {
         var opts = url.parse("http://localhost:3600/a");
         opts.headers = {};
         opts.headers[header] = "the header value";
+        opts.sensitiveHeaders = sensitiveHeaders;
 
         return server.start(app)
           .then(asPromise(function (resolve, reject) {
@@ -1718,6 +1735,7 @@ describe("follow-redirects", function () {
         var opts = url.parse("http://127.0.0.1:3600/a");
         opts.headers = { host: "localhost" };
         opts.headers[header] = "the header value";
+        opts.sensitiveHeaders = sensitiveHeaders;
 
         return server.start(app)
           .then(asPromise(function (resolve, reject) {
@@ -1773,6 +1791,7 @@ describe("follow-redirects", function () {
       opts.ca = ca;
       opts.headers = {};
       opts.headers[header] = "the header value";
+      opts.sensitiveHeaders = sensitiveHeaders;
 
       // Intercept the scheme
       opts.beforeRedirect = function (options) {
@@ -1792,7 +1811,9 @@ describe("follow-redirects", function () {
           assert.equal(body[header.toLowerCase()], undefined);
         });
     });
+  });
 
+  describe("when a beforeRedirect callback is supplied", function () {
     it("passes the redirect status code to beforeRedirect", function () {
       app.get("/a", redirectsTo("/b"));
       app.get("/b", redirectsTo("/c", 301));

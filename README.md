@@ -95,6 +95,8 @@ the following per-request options are supported:
 
 - `trackRedirects` (default: `false`) – whether to store the redirected response details into the `redirects` array on the response object.
 
+- `sensitiveHeaders` (default: `[]`) – names of headers to omit when making redirected requests (such as `X-API-Key`, `X-Auth-Token`…)
+
 
 ### Advanced usage
 By default, `follow-redirects` will use the Node.js default implementations
