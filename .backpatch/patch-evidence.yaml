@@ -1,0 +1,21 @@
+schema: osera-patch-evidence/0.1.0
+producer: moderne
+release: 1.15.12-backpatch-00001
+baseline: v1.15.11+backpatch.baseline
+fixes:
+  - cve: CVE-2026-40895
+    upstream_fix_url: https://github.com/follow-redirects/follow-redirects/commit/844c4d302ac963d29bdb5dc1754ec7df3d70d7f9
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2026-40895
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-follow-redirects/compare/48a911b~1...ae2cf18
+    basis: backport
+    artifacts:
+      - follow-redirects
+    note: "New in this release; upstream's fix in 1.16.0 (844c4d3, 080a76d, 5f62422). It closes the advisory: follow-redirects leaks Custom Authentication Headers to Cross-Domain Redirect Targets."
+tests:
+  commit: ae2cf18caf17bac69325b26f8f6b97b54afdeafa
+  command: npm pack --ignore-scripts, then mocha in the tested tree with the packed files laid over, one JUnit test per command from its exit status
+  runtime: Node.js v22.16.0, macOS 27.2 arm64
+  report: follow-redirects-1.15.12-backpatch-00001-tests.zip
+  report_sha256: 82fae8340cf1f03331ed57c96366b433bb1c9835b725505f95062d1dbe18ef7d
+  result: pass
+  note: "upstream's mocha suite upstream's tests on the tested tree with the packed files laid over at the tested commit: 1 tests, 1 passed, 0 failed, 0 skipped. The CVE tests (test/test.js), with this release's production lines reverted at the tested commit: 1 tests, 0 passed, 1 failed, 0 skipped; with them: 1 tests, 1 passed, 0 failed, 0 skipped. Built with no build step, npm pack --ignore-scripts in a directory named follow-redirects, 4 of npmjs's 7 files for 1.15.11 are identical; the rest are README.md, index.js, package.json. The archive's file-origins.yaml maps each packaged file to the commit, or names its inputs and build."
